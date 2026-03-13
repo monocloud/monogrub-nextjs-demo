@@ -1,7 +1,19 @@
 "use server";
 
-import { getSession, getTokens, isAuthenticated } from "@monocloud/auth-nextjs";
-import { MonoCloudManagementClient } from "@monocloud/management";
+import {
+  getSession,
+  getTokens,
+  isAuthenticated,
+  MonoCloudValidationError,
+} from "@monocloud/auth-nextjs";
+import {
+  MonoCloudConflictException,
+  MonoCloudForbiddenException,
+  MonoCloudKeyValidationException,
+  MonoCloudManagementClient,
+  MonoCloudPaymentRequiredException,
+  MonoCloudUnauthorizedException,
+} from "@monocloud/management";
 import { NameState, type PasswordState } from "./profile-form";
 
 const apiClient = MonoCloudManagementClient.init({
@@ -125,28 +137,6 @@ export const updateName = async (
     };
   }
 
-  if (!givenName.trim()) {
-    return {
-      given_name: givenName,
-      family_name: familyName,
-      errors: {
-        given_name: ["First Name cannot be empty."],
-      },
-      message: "Validation failed. Please check your inputs.",
-    };
-  }
-
-  if (!familyName.trim()) {
-    return {
-      given_name: givenName,
-      family_name: familyName,
-      errors: {
-        family_name: ["Last Name cannot be empty."],
-      },
-      message: "Validation failed. Please check your inputs.",
-    };
-  }
-
   try {
     const session = await getSession();
     const userId = session?.user?.sub;
@@ -165,7 +155,54 @@ export const updateName = async (
       family_name: familyName,
     };
 
-    await apiClient.users.patchClaims(userId, requestBody);
+    const res = await apiClient.users.patchClaims(userId, requestBody);
+
+    const { result } = res;
+
+    const validationErrors: { [key: string]: string[] } = {};
+
+    if (result instanceof MonoCloudKeyValidationException) {
+      Object.entries(result.errors).forEach(([key, value]) => {
+        validationErrors[key] = value;
+      });
+
+      return {
+        given_name: givenName,
+        family_name: familyName,
+        errors: validationErrors,
+        message: "",
+      };
+    }
+
+    if (
+      result instanceof MonoCloudForbiddenException ||
+      result instanceof MonoCloudUnauthorizedException
+    ) {
+      return {
+        given_name: givenName,
+        family_name: familyName,
+        errors: {},
+        message: result.response?.detail ?? "Unauthorized",
+      };
+    }
+
+    if (result instanceof MonoCloudConflictException) {
+      return {
+        given_name: givenName,
+        family_name: familyName,
+        errors: {},
+        message: result.response?.detail ?? "Conflit",
+      };
+    }
+
+    if (result instanceof MonoCloudPaymentRequiredException) {
+      return {
+        given_name: givenName,
+        family_name: familyName,
+        errors: {},
+        message: result.response?.detail ?? "Payment Required",
+      };
+    }
 
     return {
       given_name: givenName,
