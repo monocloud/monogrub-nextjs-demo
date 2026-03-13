@@ -20,9 +20,11 @@ export type PasswordState = {
 };
 
 export type NameState = {
-  name: string;
+  given_name: string;
+  family_name: string;
   errors?: {
-    name?: string[];
+    given_name?: string[];
+    family_name?: string[];
   };
   message?: string | null;
 };
@@ -36,14 +38,14 @@ export function ProfileForm() {
       current_password: "",
       new_password: "",
       confirm_password: "",
-    },
+    } satisfies PasswordState,
   );
 
   const [nameState, formNameAction, namePending] = useActionState(updateName, {
-    name: user?.name ?? "",
-  });
+    given_name: user?.given_name ?? "",
+    family_name: user?.family_name ?? "",
+  } satisfies NameState);
 
-  // --- Trigger Sonner Toast for Name Updates ---
   useEffect(() => {
     if (nameState?.message) {
       refetch();
@@ -53,7 +55,9 @@ export function ProfileForm() {
         toast.success(nameState.message);
       }
     }
-  }, [nameState, refetch]); // Runs whenever the action returns a new state object
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nameState]);
 
   // --- Trigger Sonner Toast for Password Updates ---
   useEffect(() => {
@@ -67,74 +71,100 @@ export function ProfileForm() {
   }, [passwordState]);
 
   return (
-    <div className="space-y-8">
-      <form action={formNameAction} className="space-y-4">
-        {/* --- NAME SECTION --- */}
-        <h3 className="text-lg font-medium text-gray-900 flex items-center">
-          <User className="h-5 w-5 mr-2 text-indigo-500" />
+    <div className='space-y-8'>
+      <form action={formNameAction} className='space-y-4'>
+        <h3 className='text-lg font-medium text-gray-900 flex items-center'>
+          <User className='h-5 w-5 mr-2 text-indigo-500' />
           Change Name
         </h3>
         <div>
           <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700"
+            htmlFor='given_name'
+            className='block text-sm font-medium text-gray-700'
           >
-            Full Name
+            First Name
           </label>
-          <div className="mt-1">
+          <div className='mt-1'>
             <input
-              type="text"
-              name="name"
-              id="name"
-              defaultValue={user?.name}
+              type='text'
+              name='given_name'
+              id='given_name'
+              defaultValue={nameState?.given_name || user?.given_name}
               className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md p-2 border ${
-                nameState.errors?.name ? "border-red-500" : "border-gray-300"
+                nameState.errors?.given_name
+                  ? "border-red-500"
+                  : "border-gray-300"
               }`}
-              placeholder="John Doe"
+              placeholder='John'
             />
-            {nameState.errors?.name && (
-              <p className="mt-2 text-sm text-red-600">
-                {nameState.errors.name[0]}
+            {nameState.errors?.given_name && (
+              <p className='mt-2 text-sm text-red-600'>
+                {nameState.errors.given_name[0]}
+              </p>
+            )}
+          </div>
+        </div>
+        <div>
+          <label
+            htmlFor='family_name'
+            className='block text-sm font-medium text-gray-700'
+          >
+            Last Name
+          </label>
+          <div className='mt-1'>
+            <input
+              type='text'
+              name='family_name'
+              id='family_name'
+              defaultValue={nameState?.family_name || user?.family_name}
+              className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md p-2 border ${
+                nameState.errors?.family_name
+                  ? "border-red-500"
+                  : "border-gray-300"
+              }`}
+              placeholder='Doe'
+            />
+            {nameState.errors?.family_name && (
+              <p className='mt-2 text-sm text-red-600'>
+                {nameState.errors.family_name[0]}
               </p>
             )}
           </div>
         </div>
 
-        {/* Note: Inline message block removed because sonner handles the UI now */}
-
         <button
-          type="submit"
+          type='submit'
           disabled={namePending}
-          className="inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+          className='inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50'
         >
           {namePending ? (
-            <Loader2 className="animate-spin h-4 w-4 mr-2" />
+            <Loader2 className='animate-spin h-4 w-4 mr-2' />
           ) : (
-            <Save className="h-4 w-4 mr-2" />
+            <Save className='h-4 w-4 mr-2' />
           )}
           Update Name
         </button>
       </form>
 
-      <form action={formPasswordAction} className="space-y-4">
-        <div className="border-t border-gray-200 pt-8">
-          <h3 className="text-lg font-medium text-gray-900 flex items-center">
-            <Lock className="h-5 w-5 mr-2 text-indigo-500" />
+      <form action={formPasswordAction} className='space-y-4'>
+        <div className='border-t border-gray-200 pt-8'>
+          <h3 className='text-lg font-medium text-gray-900 flex items-center'>
+            <Lock className='h-5 w-5 mr-2 text-indigo-500' />
             Change Password
           </h3>
-          <div className="space-y-4 mt-4">
+          <div className='space-y-4 mt-4'>
             <div>
               <label
-                htmlFor="current_password"
-                className="block text-sm font-medium text-gray-700"
+                htmlFor='current_password'
+                className='block text-sm font-medium text-gray-700'
               >
                 Current Password
               </label>
-              <div className="mt-1">
+              <div className='mt-1'>
                 <input
-                  type="password"
-                  name="current_password"
-                  id="current_password"
+                  type='password'
+                  name='current_password'
+                  id='current_password'
                   defaultValue={passwordState.current_password}
                   className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md p-2 border ${
                     passwordState.errors?.current_password
@@ -143,7 +173,7 @@ export function ProfileForm() {
                   }`}
                 />
                 {passwordState.errors?.current_password && (
-                  <p className="mt-2 text-sm text-red-600">
+                  <p className='mt-2 text-sm text-red-600'>
                     {passwordState.errors.current_password[0]}
                   </p>
                 )}
@@ -152,16 +182,16 @@ export function ProfileForm() {
 
             <div>
               <label
-                htmlFor="new_password"
-                className="block text-sm font-medium text-gray-700"
+                htmlFor='new_password'
+                className='block text-sm font-medium text-gray-700'
               >
                 New Password
               </label>
-              <div className="mt-1">
+              <div className='mt-1'>
                 <input
-                  type="password"
-                  name="new_password"
-                  id="new_password"
+                  type='password'
+                  name='new_password'
+                  id='new_password'
                   defaultValue={passwordState.new_password}
                   className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md p-2 border ${
                     passwordState.errors?.new_password
@@ -170,7 +200,7 @@ export function ProfileForm() {
                   }`}
                 />
                 {passwordState.errors?.new_password && (
-                  <p className="mt-2 text-sm text-red-600">
+                  <p className='mt-2 text-sm text-red-600'>
                     {passwordState.errors.new_password[0]}
                   </p>
                 )}
@@ -179,16 +209,16 @@ export function ProfileForm() {
 
             <div>
               <label
-                htmlFor="confirm_password"
-                className="block text-sm font-medium text-gray-700"
+                htmlFor='confirm_password'
+                className='block text-sm font-medium text-gray-700'
               >
                 Confirm New Password
               </label>
-              <div className="mt-1">
+              <div className='mt-1'>
                 <input
-                  type="password"
-                  name="confirm_password"
-                  id="confirm_password"
+                  type='password'
+                  name='confirm_password'
+                  id='confirm_password'
                   defaultValue={passwordState.confirm_password}
                   className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md p-2 border ${
                     passwordState.errors?.confirm_password
@@ -197,7 +227,7 @@ export function ProfileForm() {
                   }`}
                 />
                 {passwordState.errors?.confirm_password && (
-                  <p className="mt-2 text-sm text-red-600">
+                  <p className='mt-2 text-sm text-red-600'>
                     {passwordState.errors.confirm_password[0]}
                   </p>
                 )}
@@ -205,16 +235,16 @@ export function ProfileForm() {
             </div>
           </div>
 
-          <div className="mt-4">
+          <div className='mt-4'>
             <button
-              type="submit"
+              type='submit'
               disabled={passwordPending}
-              className="inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              className='inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50'
             >
               {passwordPending ? (
-                <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                <Loader2 className='animate-spin h-4 w-4 mr-2' />
               ) : (
-                <Save className="h-4 w-4 mr-2" />
+                <Save className='h-4 w-4 mr-2' />
               )}
               Update Password
             </button>

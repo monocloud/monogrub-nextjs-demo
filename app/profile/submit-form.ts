@@ -114,20 +114,34 @@ export const updateName = async (
   formData: FormData,
 ): Promise<NameState> => {
   const authenticated = await isAuthenticated();
-  const name = (formData.get("name") as string) || "";
+  const givenName = (formData.get("given_name") as string) || "";
+  const familyName = (formData.get("family_name") as string) || "";
 
   if (!authenticated) {
     return {
-      name,
+      given_name: givenName,
+      family_name: familyName,
       message: "Unauthorized",
     };
   }
 
-  if (!name.trim()) {
+  if (!givenName.trim()) {
     return {
-      name,
+      given_name: givenName,
+      family_name: familyName,
       errors: {
-        name: ["Name cannot be empty."],
+        given_name: ["First Name cannot be empty."],
+      },
+      message: "Validation failed. Please check your inputs.",
+    };
+  }
+
+  if (!familyName.trim()) {
+    return {
+      given_name: givenName,
+      family_name: familyName,
+      errors: {
+        family_name: ["Last Name cannot be empty."],
       },
       message: "Validation failed. Please check your inputs.",
     };
@@ -139,19 +153,23 @@ export const updateName = async (
 
     if (!userId) {
       return {
-        name,
+        given_name: givenName,
+        family_name: familyName,
+        errors: {},
         message: "User ID not found in session.",
       };
     }
 
     const requestBody = {
-      name: name.trim(),
+      given_name: givenName,
+      family_name: familyName,
     };
 
     await apiClient.users.patchClaims(userId, requestBody);
 
     return {
-      name: name.trim(),
+      given_name: givenName,
+      family_name: familyName,
       message: "Name updated successfully!",
     };
   } catch (error) {
@@ -163,7 +181,9 @@ export const updateName = async (
     }
 
     return {
-      name,
+      given_name: givenName,
+      family_name: familyName,
+      errors: {},
       message: errorMessage,
     };
   }
