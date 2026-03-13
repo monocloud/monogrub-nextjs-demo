@@ -5,21 +5,21 @@
       "name": "Pizza Palace",
       "cuisine": "Italian",
       "rating": 4.5,
-      "image": "https://picsum.photos/seed/pizza/400/300"
+      "image": "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
     {
       "id": "2",
       "name": "Burger Joint",
       "cuisine": "American",
       "rating": 4.2,
-      "image": "https://picsum.photos/seed/burger/400/300"
+      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1899&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
     {
       "id": "3",
       "name": "Sushi Spot",
       "cuisine": "Japanese",
       "rating": 4.8,
-      "image": "https://picsum.photos/seed/sushi/400/300"
+      "image": "https://images.unsplash.com/photo-1617196034183-421b4917c92d?q=80&w=2376&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
     {
       "id": "REST-6833",
@@ -27,6 +27,13 @@
       "cuisine": "lakshay",
       "rating": 5,
       "image": "https://picsum.photos/seed/restaurant/400/300"
+    },
+    {
+      "id": "REST-4611",
+      "name": "Dosa Mania",
+      "cuisine": "South Indian",
+      "rating": 4,
+      "image": "https://images.unsplash.com/photo-1694849789325-914b71ab4075?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     }
   ],
   "orders": [
@@ -61,6 +68,22 @@
       "total": 35,
       "status": "Processing",
       "date": "2026-03-12"
+    },
+    {
+      "id": "ORD-2473",
+      "userId": "80cfdd69-20ee-4c63-a0f8-7f83e90ca907",
+      "restaurantId": "REST-6833",
+      "total": 35,
+      "status": "Processing",
+      "date": "2026-03-13"
+    },
+    {
+      "id": "ORD-8785",
+      "userId": "80cfdd69-20ee-4c63-a0f8-7f83e90ca907",
+      "restaurantId": "1",
+      "total": 35,
+      "status": "Processing",
+      "date": "2026-03-13"
     }
   ],
   "invoices": [
@@ -87,6 +110,18 @@
       "orderId": "ORD-8519",
       "amount": 35,
       "date": "2026-03-12"
+    },
+    {
+      "id": "INV-3301",
+      "orderId": "ORD-2473",
+      "amount": 35,
+      "date": "2026-03-13"
+    },
+    {
+      "id": "INV-9307",
+      "orderId": "ORD-8785",
+      "amount": 35,
+      "date": "2026-03-13"
     }
   ]
 }
