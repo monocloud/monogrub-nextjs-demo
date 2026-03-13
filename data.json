@@ -1,0 +1,92 @@
+{
+  "restaurants": [
+    {
+      "id": "1",
+      "name": "Pizza Palace",
+      "cuisine": "Italian",
+      "rating": 4.5,
+      "image": "https://picsum.photos/seed/pizza/400/300"
+    },
+    {
+      "id": "2",
+      "name": "Burger Joint",
+      "cuisine": "American",
+      "rating": 4.2,
+      "image": "https://picsum.photos/seed/burger/400/300"
+    },
+    {
+      "id": "3",
+      "name": "Sushi Spot",
+      "cuisine": "Japanese",
+      "rating": 4.8,
+      "image": "https://picsum.photos/seed/sushi/400/300"
+    },
+    {
+      "id": "REST-6833",
+      "name": "yyy",
+      "cuisine": "lakshay",
+      "rating": 5,
+      "image": "https://picsum.photos/seed/restaurant/400/300"
+    }
+  ],
+  "orders": [
+    {
+      "id": "ORD-5114",
+      "userId": "48415a19-8762-43fe-8e93-b1a261d8b18a",
+      "restaurantId": "2",
+      "total": 35,
+      "status": "Processing",
+      "date": "2026-03-12"
+    },
+    {
+      "id": "ORD-3973",
+      "userId": "48415a19-8762-43fe-8e93-b1a261d8b18a",
+      "restaurantId": "3",
+      "total": 35,
+      "status": "Processing",
+      "date": "2026-03-12"
+    },
+    {
+      "id": "ORD-3030",
+      "userId": "48415a19-8762-43fe-8e93-b1a261d8b18a",
+      "restaurantId": "REST-6833",
+      "total": 35,
+      "status": "Processing",
+      "date": "2026-03-12"
+    },
+    {
+      "id": "ORD-8519",
+      "userId": "48415a19-8762-43fe-8e93-b1a261d8b18a",
+      "restaurantId": "2",
+      "total": 35,
+      "status": "Processing",
+      "date": "2026-03-12"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "INV-1599",
+      "orderId": "ORD-5114",
+      "amount": 35,
+      "date": "2026-03-12"
+    },
+    {
+      "id": "INV-7784",
+      "orderId": "ORD-3973",
+      "amount": 35,
+      "date": "2026-03-12"
+    },
+    {
+      "id": "INV-5968",
+      "orderId": "ORD-3030",
+      "amount": 35,
+      "date": "2026-03-12"
+    },
+    {
+      "id": "INV-7850",
+      "orderId": "ORD-8519",
+      "amount": 35,
+      "date": "2026-03-12"
+    }
+  ]
+}

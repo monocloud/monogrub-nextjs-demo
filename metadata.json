@@ -1,0 +1,5 @@
+{
+  "name": "MonoFood Dummy Dashboard",
+  "description": "A dummy food delivery dashboard to showcase MonoCloud authentication features, including protected routes, user profiles, and role-based access control.",
+  "requestFramePermissions": []
+}
