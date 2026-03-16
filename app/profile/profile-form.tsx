@@ -8,11 +8,11 @@ import { useAuth } from "@monocloud/auth-nextjs/client";
 
 // 1. Types remain exactly the same
 export type PasswordState = {
-  current_password: string;
+  old_password: string;
   new_password: string;
   confirm_password: string;
   errors?: {
-    current_password?: string[];
+    old_password?: string[];
     new_password?: string[];
     confirm_password?: string[];
   };
@@ -36,7 +36,7 @@ export function ProfileForm() {
   const [passwordState, formPasswordAction, passwordPending] = useActionState(
     updatePassword,
     {
-      current_password: "",
+      old_password: "",
       new_password: "",
       confirm_password: "",
     } satisfies PasswordState,
@@ -169,7 +169,7 @@ export function ProfileForm() {
           <div className='space-y-4 mt-4'>
             <div>
               <label
-                htmlFor='current_password'
+                htmlFor='old_password'
                 className='block text-sm font-medium text-gray-700'
               >
                 Current Password
@@ -177,18 +177,18 @@ export function ProfileForm() {
               <div className='mt-1'>
                 <input
                   type='password'
-                  name='current_password'
-                  id='current_password'
-                  defaultValue={passwordState.current_password}
+                  name='old_password'
+                  id='old_password'
+                  defaultValue={passwordState.old_password}
                   className={`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md p-2 border ${
-                    passwordState.errors?.current_password
+                    passwordState.errors?.old_password
                       ? "border-red-500"
                       : "border-gray-300"
                   }`}
                 />
-                {passwordState.errors?.current_password && (
+                {passwordState.errors?.old_password && (
                   <p className='mt-2 text-sm text-red-600'>
-                    {passwordState.errors.current_password[0]}
+                    {passwordState.errors.old_password[0]}
                   </p>
                 )}
               </div>

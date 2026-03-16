@@ -7,14 +7,15 @@ import {
   MonoCloudValidationError,
 } from "@monocloud/auth-nextjs";
 import {
+  ChangePasswordRequest,
   MonoCloudConflictException,
+  MonoCloudException,
   MonoCloudForbiddenException,
   MonoCloudIdentityValidationException,
   MonoCloudKeyValidationException,
   MonoCloudManagementClient,
   MonoCloudPaymentRequiredException,
   MonoCloudUnauthorizedException,
-  SetPasswordRequest,
 } from "@monocloud/management";
 import { NameState, type PasswordState } from "./profile-form";
 
@@ -29,13 +30,13 @@ export const updatePassword = async (
 ): Promise<PasswordState> => {
   const authenticated = await isAuthenticated();
 
-  const current_password = (formData.get("current_password") as string) || "";
+  const old_password = (formData.get("old_password") as string) || "";
   const new_password = (formData.get("new_password") as string) || "";
   const confirm_password = (formData.get("confirm_password") as string) || "";
 
   if (!authenticated) {
     return {
-      current_password,
+      old_password,
       new_password,
       confirm_password,
       message: "Unauthorized",
@@ -44,25 +45,11 @@ export const updatePassword = async (
 
   if (new_password !== confirm_password) {
     return {
-      current_password,
+      old_password,
       new_password,
       confirm_password,
       errors: {
         confirm_password: ["Passwords do not match. Please try again."],
-      },
-      message: "Validation failed. Please check your inputs.",
-    };
-  }
-
-  if (new_password && !current_password) {
-    return {
-      current_password,
-      new_password,
-      confirm_password,
-      errors: {
-        current_password: [
-          "Current password is required to set a new password.",
-        ],
       },
       message: "Validation failed. Please check your inputs.",
     };
@@ -74,7 +61,7 @@ export const updatePassword = async (
 
     if (!userId) {
       return {
-        current_password,
+        old_password,
         new_password,
         confirm_password,
         message: "User ID not found in session.",
@@ -83,17 +70,15 @@ export const updatePassword = async (
 
     // Note: The Management SDK usually sets the password directly.
     // We are passing the new plaintext password.
-    const requestBody: SetPasswordRequest = {
-      password: new_password,
-      skip_password_policy_checks: false,
-      revoke_sessions: true,
-      is_temporary_password: false,
+    const requestBody: ChangePasswordRequest = {
+      old_password,
+      new_password: new_password,
     };
 
-    await apiClient.users.setPassword(userId, requestBody);
+    await apiClient.users.changePassword(userId, requestBody);
 
     return {
-      current_password: "",
+      old_password: "",
       new_password: "",
       confirm_password: "",
       message: "Profile updated successfully!",
@@ -105,24 +90,28 @@ export const updatePassword = async (
       const errors = error.errors.map((x) => x.description);
 
       return {
-        current_password: "",
-        new_password: "",
+        old_password,
+        new_password,
         confirm_password: "",
         errors: {
-          current_password: errors,
+          old_password: errors,
         },
         message: "Error Updating password",
       };
     }
 
     if (error instanceof MonoCloudKeyValidationException) {
+      const errors: { [key: string]: string[] } = {};
+
+      Object.entries(error.errors).forEach(([key, value]) => {
+        errors[key] = value;
+      });
+
       return {
-        current_password: "",
-        new_password: "",
+        old_password,
+        new_password,
         confirm_password: "",
-        errors: {
-          current_password: error.errors?.password,
-        },
+        errors: errors,
         message: "Error Updating password",
       };
     }
@@ -132,8 +121,8 @@ export const updatePassword = async (
       error instanceof MonoCloudUnauthorizedException
     ) {
       return {
-        current_password: "",
-        new_password: "",
+        old_password,
+        new_password,
         confirm_password: "",
         errors: {},
         message: error.response?.detail ?? "Unauthorized",
@@ -142,8 +131,8 @@ export const updatePassword = async (
 
     if (error instanceof MonoCloudConflictException) {
       return {
-        current_password: "",
-        new_password: "",
+        old_password,
+        new_password,
         confirm_password: "",
         errors: {},
         message: error.response?.detail ?? "Conflit",
@@ -152,11 +141,21 @@ export const updatePassword = async (
 
     if (error instanceof MonoCloudPaymentRequiredException) {
       return {
-        current_password: "",
-        new_password: "",
+        old_password,
+        new_password,
         confirm_password: "",
         errors: {},
         message: error.response?.detail ?? "Payment Required",
+      };
+    }
+
+    if (error instanceof MonoCloudException) {
+      return {
+        old_password,
+        new_password,
+        confirm_password: "",
+        errors: {},
+        message: error.message ?? "Payment Required",
       };
     }
 
@@ -166,7 +165,7 @@ export const updatePassword = async (
     }
 
     return {
-      current_password,
+      old_password,
       new_password,
       confirm_password,
       message: errorMessage,

@@ -10,7 +10,7 @@
     "clean": "next clean"
   },
   "dependencies": {
-    "@monocloud/auth-nextjs": "^0.1.9",
+    "@monocloud/auth-nextjs": "^0.1.10",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.577.0",
@@ -18,7 +18,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tailwind-merge": "^3.5.0",
-    "@monocloud/management": "^0.2.2",
+    "@monocloud/management": "^0.2.3",
     "sonner": "^2.0.7"
   },
   "devDependencies": {
