@@ -20,8 +20,8 @@ export type PasswordState = {
 };
 
 export type NameState = {
-  given_name: string;
-  family_name: string;
+  given_name?: string | null;
+  family_name?: string | null;
   errors?: {
     given_name?: string[];
     family_name?: string[];

@@ -2,9 +2,7 @@
 
 import {
   getSession,
-  getTokens,
   isAuthenticated,
-  MonoCloudValidationError,
 } from "@monocloud/auth-nextjs";
 import {
   ChangePasswordRequest,
@@ -21,7 +19,7 @@ import { NameState, type PasswordState } from "./profile-form";
 
 const apiClient = MonoCloudManagementClient.init({
   domain: process.env.MONOCLOUD_AUTH_TENANT_DOMAIN as string,
-  apiKey: process.env.MONOCLOUD_AUTH_API_KEY as string,
+  apiKey: process.env.MONOCLOUD_API_KEY as string,
 });
 
 export const updatePassword = async (
@@ -178,8 +176,8 @@ export const updateName = async (
   formData: FormData,
 ): Promise<NameState> => {
   const authenticated = await isAuthenticated();
-  const givenName = (formData.get("given_name") as string) || "";
-  const familyName = (formData.get("family_name") as string) || "";
+  const givenName = (formData.get("given_name") as string) || null;
+  const familyName = (formData.get("family_name") as string) || null;
 
   if (!authenticated) {
     return {
@@ -219,19 +217,6 @@ export const updateName = async (
 
     const validationErrors: { [key: string]: string[] } = {};
 
-    if (error instanceof MonoCloudKeyValidationException) {
-      Object.entries(error.errors).forEach(([key, value]) => {
-        validationErrors[key] = value;
-      });
-
-      return {
-        given_name: givenName,
-        family_name: familyName,
-        errors: validationErrors,
-        message: "",
-      };
-    }
-
     if (error instanceof MonoCloudIdentityValidationException) {
       const errors = error.errors.map((x) => x.description);
 
@@ -261,15 +246,6 @@ export const updateName = async (
         family_name: familyName,
         errors: {},
         message: error.response?.detail ?? "Conflit",
-      };
-    }
-
-    if (error instanceof MonoCloudPaymentRequiredException) {
-      return {
-        given_name: givenName,
-        family_name: familyName,
-        errors: {},
-        message: error.response?.detail ?? "Payment Required",
       };
     }
 

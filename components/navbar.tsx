@@ -1,13 +1,13 @@
-"use client";
-
 import Link from "next/link";
 import { SignIn, SignOut } from "@monocloud/auth-nextjs/components";
 import { Utensils, User, ShieldCheck, LogIn } from "lucide-react";
 import { Protected } from "@monocloud/auth-nextjs/components/client";
 import { useAuth } from "@monocloud/auth-nextjs/client";
+import { isAuthenticated, isUserInGroup } from "@monocloud/auth-nextjs";
 
-export function Navbar() {
-  const { isAuthenticated } = useAuth();
+export async function Navbar() {
+  const isAuth = await isAuthenticated();
+  const isInGroup = await isUserInGroup(["admin"]);
 
   return (
     <nav className="bg-white border-b border-gray-200">
@@ -22,7 +22,7 @@ export function Navbar() {
             </Link>
           </div>
           <div className="flex items-center space-x-4">
-            {isAuthenticated ? (
+            {isAuth ? (
               <>
                 <Link
                   href="/profile"
@@ -32,7 +32,7 @@ export function Navbar() {
                   Profile
                 </Link>
 
-                <Protected groups={["admin"]}>
+                {isInGroup && (
                   <Link
                     href="/admin"
                     className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center"
@@ -40,11 +40,11 @@ export function Navbar() {
                     <ShieldCheck className="h-4 w-4 mr-1" />
                     Admin
                   </Link>
-                </Protected>
+                )}
 
-                <div className="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium cursor-pointer">
-                  <SignOut>Sign Out</SignOut>
-                </div>
+                <SignOut className="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium cursor-pointer">
+                  Sign Out
+                </SignOut>
               </>
             ) : (
               <SignIn className="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium flex items-center">

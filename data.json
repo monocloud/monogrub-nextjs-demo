@@ -23,8 +23,8 @@
     },
     {
       "id": "REST-6833",
-      "name": "yyy",
-      "cuisine": "lakshay",
+      "name": "Food Junction",
+      "cuisine": "Multi-cuisine",
       "rating": 5,
       "image": "https://picsum.photos/seed/restaurant/400/300"
     },
@@ -84,6 +84,22 @@
       "total": 35,
       "status": "Processing",
       "date": "2026-03-13"
+    },
+    {
+      "id": "ORD-1542",
+      "userId": "230068d6-9acd-46f8-a723-6b338a6ada52",
+      "restaurantId": "1",
+      "total": 35,
+      "status": "Processing",
+      "date": "2026-03-16"
+    },
+    {
+      "id": "ORD-1420",
+      "userId": "230068d6-9acd-46f8-a723-6b338a6ada52",
+      "restaurantId": "2",
+      "total": 35,
+      "status": "Processing",
+      "date": "2026-03-16"
     }
   ],
   "invoices": [
@@ -122,6 +138,18 @@
       "orderId": "ORD-8785",
       "amount": 35,
       "date": "2026-03-13"
+    },
+    {
+      "id": "INV-9793",
+      "orderId": "ORD-1542",
+      "amount": 35,
+      "date": "2026-03-16"
+    },
+    {
+      "id": "INV-774",
+      "orderId": "ORD-1420",
+      "amount": 35,
+      "date": "2026-03-16"
     }
   ]
 }
