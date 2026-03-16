@@ -9,10 +9,12 @@ import {
 import {
   MonoCloudConflictException,
   MonoCloudForbiddenException,
+  MonoCloudIdentityValidationException,
   MonoCloudKeyValidationException,
   MonoCloudManagementClient,
   MonoCloudPaymentRequiredException,
   MonoCloudUnauthorizedException,
+  SetPasswordRequest,
 } from "@monocloud/management";
 import { NameState, type PasswordState } from "./profile-form";
 
@@ -67,7 +69,6 @@ export const updatePassword = async (
   }
 
   try {
-    // 2. Retrieve the session to get the user ID
     const session = await getSession();
     const userId = session?.user?.sub;
 
@@ -80,19 +81,15 @@ export const updatePassword = async (
       };
     }
 
-    // 3. Prepare the request body for MonoCloud
     // Note: The Management SDK usually sets the password directly.
     // We are passing the new plaintext password.
-    const requestBody = {
+    const requestBody: SetPasswordRequest = {
       password: new_password,
-      // You likely want to enforce password policies and revoke existing sessions
-      // when a user manually changes their password for security reasons.
       skip_password_policy_checks: false,
       revoke_sessions: true,
       is_temporary_password: false,
     };
 
-    // 4. Make the API Call to MonoCloud
     await apiClient.users.setPassword(userId, requestBody);
 
     return {
@@ -104,11 +101,67 @@ export const updatePassword = async (
   } catch (error) {
     console.error("Failed to update password:", error);
 
-    // Attempt to parse MonoCloud API errors if they provide structured responses
+    if (error instanceof MonoCloudIdentityValidationException) {
+      const errors = error.errors.map((x) => x.description);
+
+      return {
+        current_password: "",
+        new_password: "",
+        confirm_password: "",
+        errors: {
+          current_password: errors,
+        },
+        message: "Error Updating password",
+      };
+    }
+
+    if (error instanceof MonoCloudKeyValidationException) {
+      return {
+        current_password: "",
+        new_password: "",
+        confirm_password: "",
+        errors: {
+          current_password: error.errors?.password,
+        },
+        message: "Error Updating password",
+      };
+    }
+
+    if (
+      error instanceof MonoCloudForbiddenException ||
+      error instanceof MonoCloudUnauthorizedException
+    ) {
+      return {
+        current_password: "",
+        new_password: "",
+        confirm_password: "",
+        errors: {},
+        message: error.response?.detail ?? "Unauthorized",
+      };
+    }
+
+    if (error instanceof MonoCloudConflictException) {
+      return {
+        current_password: "",
+        new_password: "",
+        confirm_password: "",
+        errors: {},
+        message: error.response?.detail ?? "Conflit",
+      };
+    }
+
+    if (error instanceof MonoCloudPaymentRequiredException) {
+      return {
+        current_password: "",
+        new_password: "",
+        confirm_password: "",
+        errors: {},
+        message: error.response?.detail ?? "Payment Required",
+      };
+    }
+
     let errorMessage = "An unexpected error occurred. Please try again later.";
     if (error instanceof Error) {
-      // You might want to refine this based on the specific error structures
-      // returned by the @monocloud/management SDK (e.g., policy violations)
       errorMessage = error.message;
     }
 
@@ -155,14 +208,20 @@ export const updateName = async (
       family_name: familyName,
     };
 
-    const res = await apiClient.users.patchClaims(userId, requestBody);
+    await apiClient.users.patchClaims(userId, requestBody);
 
-    const { result } = res;
+    return {
+      given_name: givenName,
+      family_name: familyName,
+      message: "Name updated successfully!",
+    };
+  } catch (error) {
+    console.error("Failed to update name:", error);
 
     const validationErrors: { [key: string]: string[] } = {};
 
-    if (result instanceof MonoCloudKeyValidationException) {
-      Object.entries(result.errors).forEach(([key, value]) => {
+    if (error instanceof MonoCloudKeyValidationException) {
+      Object.entries(error.errors).forEach(([key, value]) => {
         validationErrors[key] = value;
       });
 
@@ -174,43 +233,46 @@ export const updateName = async (
       };
     }
 
+    if (error instanceof MonoCloudIdentityValidationException) {
+      const errors = error.errors.map((x) => x.description);
+
+      return {
+        given_name: givenName,
+        family_name: familyName,
+        errors: {},
+        message: errors,
+      };
+    }
+
     if (
-      result instanceof MonoCloudForbiddenException ||
-      result instanceof MonoCloudUnauthorizedException
+      error instanceof MonoCloudForbiddenException ||
+      error instanceof MonoCloudUnauthorizedException
     ) {
       return {
         given_name: givenName,
         family_name: familyName,
         errors: {},
-        message: result.response?.detail ?? "Unauthorized",
+        message: error.response?.detail ?? "Unauthorized",
       };
     }
 
-    if (result instanceof MonoCloudConflictException) {
+    if (error instanceof MonoCloudConflictException) {
       return {
         given_name: givenName,
         family_name: familyName,
         errors: {},
-        message: result.response?.detail ?? "Conflit",
+        message: error.response?.detail ?? "Conflit",
       };
     }
 
-    if (result instanceof MonoCloudPaymentRequiredException) {
+    if (error instanceof MonoCloudPaymentRequiredException) {
       return {
         given_name: givenName,
         family_name: familyName,
         errors: {},
-        message: result.response?.detail ?? "Payment Required",
+        message: error.response?.detail ?? "Payment Required",
       };
     }
-
-    return {
-      given_name: givenName,
-      family_name: familyName,
-      message: "Name updated successfully!",
-    };
-  } catch (error) {
-    console.error("Failed to update name:", error);
 
     let errorMessage = "An unexpected error occurred. Please try again later.";
     if (error instanceof Error) {

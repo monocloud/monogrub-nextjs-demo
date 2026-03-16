@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { User, Lock, Save, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { updateName, updatePassword } from "./submit-form";
@@ -26,11 +26,12 @@ export type NameState = {
     given_name?: string[];
     family_name?: string[];
   };
-  message?: string | null;
+  message?: string | null | string[];
 };
 
 export function ProfileForm() {
   const { user, refetch } = useAuth();
+  const [nameErrors, setNameErrors] = useState<string[]>([]);
 
   const [passwordState, formPasswordAction, passwordPending] = useActionState(
     updatePassword,
@@ -47,13 +48,16 @@ export function ProfileForm() {
   } satisfies NameState);
 
   useEffect(() => {
-    if (nameState?.message) {
-      refetch();
-      if (nameState.errors) {
-        toast.error(nameState.message);
-      } else {
-        toast.success(nameState.message);
-      }
+    if (!nameState?.message) return;
+
+    refetch();
+
+    if (!nameState.errors) {
+      toast.success(nameState.message);
+    } else if (typeof nameState.message === "string") {
+      toast.error(nameState.message);
+    } else {
+      setNameErrors(nameState.message);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -144,6 +148,16 @@ export function ProfileForm() {
           )}
           Update Name
         </button>
+
+        {nameErrors.length > 0 ? (
+          <ul className='mt-6'>
+            {nameErrors.map((error) => (
+              <li key={error} className='text-red-500'>
+                {error}
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </form>
 
       <form action={formPasswordAction} className='space-y-4'>
