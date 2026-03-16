@@ -1,7 +1,7 @@
 <div align="center">
   <a href="https://www.monocloud.com?utm_source=github&utm_medium=monofood" target="_blank" rel="noopener noreferrer">
     <picture>
-      <img src="https://raw.githubusercontent.com/monocloud/MonoFood/refs/heads/main/banner.svg?token=GHSAT0AAAAAADSOYQQK6BU7IWO67JGSQEEM2NTWTLQ" alt="MonoCloud Banner">
+      <img src="https://raw.githubusercontent.com/monocloud/MonoFood/refs/heads/main/banner.svg?token=GHSAT0AAAAAADSOYQQLUKTSYJQZ6JJPYUJK2NXWITA" alt="MonoCloud Banner">
     </picture>
   </a>
 </div>
