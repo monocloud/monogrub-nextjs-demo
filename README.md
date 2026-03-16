@@ -1,37 +1,38 @@
 <div align="center">
   <a href="https://www.monocloud.com?utm_source=github&utm_medium=monofood" target="_blank" rel="noopener noreferrer">
     <picture>
-      <img src="https://raw.githubusercontent.com/monocloud/MonoFood/refs/heads/main/banner.svg?token=GHSAT0AAAAAADSOYQQLUKTSYJQZ6JJPYUJK2NXWITA" alt="MonoCloud Banner">
+      <img src="https://raw.githubusercontent.com/monocloud/monofood-nextjs-demo/refs/heads/main/banner.svg?token=GHSAT0AAAAAADSOYQQLUKTSYJQZ6JJPYUJK2NXWITA" alt="MonoCloud Banner">
     </picture>
   </a>
 </div>
 <br />
 
-# MonoFood
+# MonoFood Next.js Demo
 
-MonoFood is an example food ordering and invoicing applictaion build with MonoCloud authentication.
+MonoFood is a sample food ordering and invoicing app that demonstrates how to integrate MonoCloud into a Next.js application.
 
 ## Features
 
-- **User Authentication**: Secure login and registration powered by MonoCloud.
-- **Product Catalog**: Browse a variety of food items.
-- **Invoicing**: Automatically generate invoices for completed orders.
-- **Profile Management**: View and update user profile information using MonoCloud's [Management SDK](https://github.com/monocloud/management-js).
+- **Authentication**: Sign up, sign in, and sign out with MonoCloud.
+- **Protected Routes**: Restrict access to authenticated users.
+- **Product Catalog**: Browse a list of food items.
+- **Invoicing**: View invoices for completed orders.
+- **Profile Management**: View and update basic profile information using MonoCloud's [Management SDK](https://github.com/monocloud/management-js).
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v20 or higher)
-- Create a [MonoCloud account](https://dashboard.monocloud.dev/api/auth/signin?prompt=create)
+- Node.js 20 or later 
+- Create a [MonoCloud account](https://dashboard.monocloud.com/api/auth/signin?prompt=create)
 
 ### Installation
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/monocloud/monofood.git
-   cd monofood
+   git clone https://github.com/monocloud/monofood-nextjs-demo.git
+   cd monofood-nextjs-demo
    ```
 
 2. Install dependencies:
@@ -40,8 +41,7 @@ MonoFood is an example food ordering and invoicing applictaion build with MonoCl
    npm install
    ```
 
-3. Set up environment variables:
-   Create a `.env.local` file in the root directory and add your MonoCloud credentials:
+3. Create a .env.local file in the project root and add your MonoCloud credentials:
 
    ```env
    MONOCLOUD_AUTH_TENANT_DOMAIN=<your-tenant-domain>
@@ -59,4 +59,17 @@ MonoFood is an example food ordering and invoicing applictaion build with MonoCl
    npm run dev
    ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## What this example demonstrates
+
+MonoFood can be used as a reference for building applications with:
+- User authentication
+- Protected pages
+- Profile updates
+- MonoCloud Management SDK integration
+
+Learn more
+- [MonoCloud Website](https://monocloud.com/)
+- [MonoCloud Documentation](https://www.monocloud.com/docs)
+- [MonoCloud Management SDK](https://github.com/monocloud/management-js)
